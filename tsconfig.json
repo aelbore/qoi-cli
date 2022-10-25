@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "outDir": "dist",
+    "target": "es2017",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "ES2019",
+      "DOM"
+    ],
+    "paths": {
+      "types": [ "./src/types.ts" ]
+    }
+  }
+}
