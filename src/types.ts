@@ -1,5 +1,5 @@
 import type { Options } from '@swc/core'
-import type { Plugin, OutputOptions, ModuleFormat, RollupOptions } from 'rollup'
+import type { OutputOptions, ModuleFormat, RollupOptions, Plugin as RollupPlugin } from 'rollup'
 import type { PackageJson as Package } from 'types-package-json'
 
 export type PackageJson = Package & { 
@@ -39,6 +39,10 @@ export type DTSOptions = {
 }
 
 export type PackageJsonFunc = (pkg?: PackageJson) => PackageJson
+
+export interface Plugin extends RollupPlugin {
+  enforce?: 'pre' | 'post'
+}
 
 export interface Config {
   input?: string | string[]
