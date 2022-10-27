@@ -68,7 +68,10 @@ const requireModule = (modulePath: string): RequireModule => {
   } catch { return createRequire(import.meta.url)(modulePath) }
 }
 
-const updateExternalWithResolve = (options: BuildOptions) => {
+const updateExternalWithResolve = (
+  options: Omit<BuildOptions, 'resolve'> 
+    & { resolve?: boolean | string | string[] }
+) => {
   const { resolve, external } = options
   if (typeof resolve == "boolean" && resolve) {
     return []
@@ -180,6 +183,9 @@ const dtsBuild = async (options: TypesOptions) => {
   const { input, output: o, external, pkg, resolve, dts } = options
   const dtsPlugin = await import('rollup-plugin-dts')
 
+  const resolve$ = Array.isArray(resolve) 
+    ? resolve: typeof resolve == 'string' ? resolve.split(','): []
+
   const createDefaultOptions = () => {
     const output = Array.isArray(o) ? o: [ o ]
     const file = output[0].entryFileNames
@@ -207,8 +213,8 @@ const dtsBuild = async (options: TypesOptions) => {
         }
       },
       dtsPlugin.default({ 
-        respectExternal: opts.resolve || 
-          (Array.isArray(resolve) ? resolve.length ? true: false: resolve || false)
+        respectExternal: (opts.resolve as boolean) || 
+         (typeof resolve == 'boolean' ? resolve: resolve$.length ? true: false) as boolean         
       })
     ]
   })
@@ -335,9 +341,12 @@ export async function handler(options: BuildOptions) {
       ((typeof options.dts === 'boolean' && options.dts) || !isDtsOnly(options, c)) 
         && build(opts),
       (options.dts || c.dts) 
-        && dtsBuild({ ...opts, dts: options.dts || c.dts, resolve: c.resolve }),
+        && dtsBuild({ 
+            ...opts, dts: options.dts || c.dts, 
+            resolve: c.resolve || options.resolve
+          }),
       copyReadMeFile({ output: options.outDir }),
-      c.packageJson && copyPackge({ 
+      copyPackge({ 
         pkg, 
         outDir: options.outDir,
         packageJson: c.packageJson as PackageJsonFunc,

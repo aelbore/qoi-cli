@@ -19,11 +19,17 @@ export function run(p: PackageJson) {
     'build [dir]', 
     'Build your typescript or javascript code')
   .option(
+    '-f, --format <format>', 
+    '[string] Specifies the format of the generated bundle (default: "es")')    
+  .option(
     '--dts [dts]', 
     '[boolean] Generates corresponding .d.ts file  (default: false)')
   .option(
     '--resolve [resolve]', 
     '[boolean] resolve external dependencies')
+  .option(
+    '--external <external>', 
+    '[string] Specify external dependencies')
   .option(
     '--cleanOutDir', 
     '[boolean] force empty outDir')

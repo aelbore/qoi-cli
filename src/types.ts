@@ -18,7 +18,7 @@ export interface BuildOptions extends CliOptions {
   module?: boolean
   format?: ModuleFormat
   external?: string | string[]
-  resolve?: boolean | string | string[]
+  resolve?: boolean | string
   cleanOutDir?: boolean
   sourcemap?: boolean
   write?: boolean
@@ -35,7 +35,7 @@ export interface BuildOutputOptions extends BuildOptions {
 export type DTSOptions = {
   file?: string
   write?: boolean
-  resolve?: boolean
+  resolve?: boolean | string
 }
 
 export type PackageJsonFunc = (pkg?: PackageJson) => PackageJson
@@ -43,7 +43,7 @@ export type PackageJsonFunc = (pkg?: PackageJson) => PackageJson
 export interface Config {
   input?: string | string[]
   external?: string[]
-  resolve?: boolean | string[]
+  resolve?: boolean | string[] 
   dts?: boolean | 'only' |  DTSOptions
   plugins?: Plugin[] | [Plugin[]]
   swc?: Options
@@ -66,7 +66,7 @@ export interface CopyPackageOptions {
 export type TypesOptions = { 
   dts?: boolean | 'only' | DTSOptions, 
   pkg?: PackageJson,
-  resolve?: boolean | string[]
+  resolve?: boolean | string | string[]
 } & RollupOptions
 
 export type RegisterOptions = Options & {
