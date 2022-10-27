@@ -44,12 +44,14 @@ export interface Plugin extends RollupPlugin {
   enforce?: 'pre' | 'post'
 }
 
+export type InputPlugin = Plugin | InputPlugin[]
+
 export interface Config {
-  input?: string | string[]
+  input?: string | string[] | {[key: string]: string}
   external?: string[]
   resolve?: boolean | string[] 
   dts?: boolean | 'only' |  DTSOptions
-  plugins?: Plugin[] | [Plugin[]]
+  plugins?: InputPlugin
   swc?: Options
   output?(options: OutputOptions): OutputOptions
   buildEnd?(): Promise<void>

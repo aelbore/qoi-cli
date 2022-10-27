@@ -157,7 +157,9 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
       ]
     }),
     plugins: [
-      ...config?.plugins?.flat() || [],
+      ...(config.plugins && Array.isArray(config.plugins))
+        ? config.plugins.flat()
+        : config.plugins ? [ config.plugins ]: [],
       ...tsPaths(),
       removeLicense(minify),
       commonjs(),
