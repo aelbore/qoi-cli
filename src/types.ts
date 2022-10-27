@@ -85,4 +85,4 @@ export type baseExternals = (pkg?: PackageJson) => string[]
 export type register = (options?: Options) => void
 export type createDefaultConfig = (options?: Options) => void
 
-export const defineConfig = (config: Config) => config
+export const defineConfig = (config: Config | Config[]) => config
