@@ -90,6 +90,7 @@ const getTsConfig = () => {
 
 export function createDefaultConfig(options?: Options) {
   return {
+    ...options || {},
     jsc: {
       parser: {
         syntax: 'typescript',
@@ -115,7 +116,17 @@ export function register(options?: RegisterOptions) {
   const compileCode = (code: string, filename: string) => {
     return compile(code, filename, {
       ...options || {},
-      jsc: { ...options?.jsc || {}, ...paths || {} }
+      jsc: { 
+        ...options?.jsc || {}, 
+        ...paths ? { paths }: {}
+      },
+      sourceMaps: 'inline',
+      minify: false,
+      isModule: true,
+      module: { 
+        type: 'commonjs', 
+        noInterop: false 
+      }
     })
   }
 

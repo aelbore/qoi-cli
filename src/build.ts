@@ -7,7 +7,8 @@ import type {
   BuildOutputOptions,
   TypesOptions,
   DTSOptions,
-  CopyPackageOptions
+  CopyPackageOptions,
+  PackageJsonFunc
 } from 'types'
 
 import { existsSync, statSync, rmSync, mkdirSync } from 'node:fs'
@@ -32,6 +33,11 @@ type CreateOptions = {
 type CopyReadmeOptions = {
   filePath?: string
   output?: string
+}
+
+type EntryFile = {
+  dir?: string
+  pkgName?: string
 }
 
 const baseDir = () => {
@@ -92,8 +98,8 @@ const removeLicense = (minify: boolean) => {
 }
 
 const minifyLiterals = (isLiterals: boolean) => {
-  const toMinify = async (code: string) => {
-    const minify = await import('minify-html-literals')
+  const toMinify = (code: string) => {
+    const minify = createRequire(import.meta.url)('minify-html-literals')
     return minify.minifyHTMLLiterals(code)
   }
   return {
@@ -134,7 +140,7 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
   const isLiterals = (typeof options.minify == 'string') && options.minify.includes('literals')
   const minify = (typeof options.minify == 'boolean') ? options.minify: isLiterals
   return {
-    input: config.input,
+    input: config.input || getEntryFile({ pkgName: pkg.name, dir: options.dir }),
     external: updateExternalWithResolve({
       resolve: config.resolve ?? options.resolve ?? false,
       external: [
@@ -186,7 +192,7 @@ const dtsBuild = async (options: TypesOptions) => {
       resolve: false
     } as DTSOptions
   }
-  const opts = typeof dts == 'boolean' 
+  const opts = typeof dts == 'boolean' || typeof dts == 'string'
     ? createDefaultOptions(): { ...createDefaultOptions(), ...dts || {} }
 
   const bundle = await rollup({
@@ -225,7 +231,7 @@ const createCommonjsPackageFile = async (outDir: string) => {
 }
 
 const copyPackge = async (options: CopyPackageOptions) => {
-  const { pkg, outDir, legacy } = options
+  const { pkg, outDir, legacy, packageJson } = options
 
   const name = getPackageNameScope(pkg.name)
   const main = pkg.main || `${name}.js`
@@ -253,9 +259,11 @@ const copyPackge = async (options: CopyPackageOptions) => {
         : {})
   } as PackageJson
 
+  const pkgJsonFunc = typeof packageJson == 'boolean' ? undefined: packageJson
+  const json = pkgJsonFunc?.(packageFile) ?? packageFile
   const outputFile = join(outDir, 'package.json')
 
-  await writeFile(outputFile, JSON.stringify(packageFile, null, 2))
+  await writeFile(outputFile, JSON.stringify(json, null, 2))
   hasLegacy && await createCommonjsPackageFile(outDir)
 }
 
@@ -266,6 +274,32 @@ function loadConfig(configFile?: string) {
       ? requireModule(CONFIG_FULL_PATH)?.default
       : {}
   ) as Config | Config[]
+}
+
+const getEntryFile = (options?: EntryFile) => {
+  const extensions = [ '.ts', '.js', '.tsx', '.jsx', '.mjs']
+  const createExtensions = (value: string)  => extensions.map(e => `${value}${e}`)
+  
+  const { dir = 'src', pkgName } = options || {}
+  const name = getPackageNameScope(pkgName)
+
+  const entryFiles = [ 
+    ...createExtensions('index'),
+    ...createExtensions('main'),
+    ...(name ? createExtensions(name): []) 
+  ]
+  const file = entryFiles.find(entry => existsSync(join(dir, entry)))
+    
+  if (file) {
+    return join(dir, file)
+  }
+
+  throw new Error('Entry file is not exist.')
+}
+
+const isDtsOnly = (options: BuildOptions, config: Config) => {
+  return (typeof options.dts == 'string' && options.dts === 'only')
+    || (typeof config.dts == 'string' && config.dts === 'only')
 }
 
 export function baseExternals(pkg?: PackageJson) {
@@ -294,16 +328,19 @@ export async function handler(options: BuildOptions) {
   const configs = Array.isArray(config) ? config: [ config ]
   
   options.cleanOutDir && rmSync(options.outDir, { force: true, recursive: true })
-  
+
   await Promise.all(configs.map(async c => {
     const opts = createOptions({ config: c, options, pkg })
     await Promise.all([ 
-      (!c.dts) && build(opts),
-      (c.dts) && dtsBuild({ ...opts, dts: c.dts, resolve: c.resolve }),
+      ((typeof options.dts === 'boolean' && options.dts) || !isDtsOnly(options, c)) 
+        && build(opts),
+      (options.dts || c.dts) 
+        && dtsBuild({ ...opts, dts: options.dts || c.dts, resolve: c.resolve }),
       copyReadMeFile({ output: options.outDir }),
-      copyPackge({ 
+      c.packageJson && copyPackge({ 
         pkg, 
         outDir: options.outDir,
+        packageJson: c.packageJson as PackageJsonFunc,
         legacy: options.format.split(',').includes('cjs') 
       })
     ])

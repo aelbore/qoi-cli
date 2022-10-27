@@ -1,8 +1,10 @@
 import type { OutputOptions, PreRenderedChunk } from 'rollup'
 import { defineConfig } from './src/build'
+import { PackageJson } from 'types'
 
 import json from '@rollup/plugin-json'
 import fs from 'fs/promises'
+import { existsSync } from 'fs'
 
 export default defineConfig([
   {
@@ -14,13 +16,12 @@ export default defineConfig([
       'source-map-support',
       'picomatch',
       'magic-string',
-      'minify-html-literals',
       'rollup-plugin-dts'
     ],
     plugins: [ json() ],
     output(options: OutputOptions) {
+      options.minifyInternalExports = false
       options.manualChunks = (id: string) => {
-        if (id.includes('minify-html-literals')) return 'minify-html-literals'
         if (id.includes('rollup-plugin-dts')) return 'rollup-plugin-dts'
         if (id.includes('@rollup')) return 'build.vendor'
         if (id.includes('node_modules')) return 'vendor'
@@ -37,12 +38,16 @@ export default defineConfig([
       return options
     },
     async buildEnd() {
-      await fs.unlink('./dist/qoi-cli.js')
-      await fs.copyFile('./src/index.ts', './dist/qoi-cli.js')
+      const destPath = './dist/qoi-cli.js'
+      existsSync(destPath) && await fs.unlink(destPath)
+      await fs.copyFile('./src/index.ts', destPath)
     }
   },
   {
     input: './src/cli.ts',
+    external: [
+      './build'
+    ],
     resolve: [ 'cac' ],
     output(options: OutputOptions) {
       options.entryFileNames = 'cli.mjs'
@@ -55,6 +60,15 @@ export default defineConfig([
   {
     input: './src/types.ts',
     resolve: [ 'types-package-json' ],
-    dts: true
+    packageJson(pkg: PackageJson) {
+      pkg.exports = {
+        ...pkg.exports || {},
+        '.': { default: './qoi-cli.js' },
+        './register': './register.js',
+        './build': './build.js'
+      }
+      return pkg
+    },
+    dts: 'only'
   }
 ])

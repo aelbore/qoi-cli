@@ -8,17 +8,19 @@ import { cac } from 'cac'
 
 export function run(p: PackageJson) {
   const cli = cac('qoi')
+  const require$ = createRequire(import.meta.url)
   
   cli
   .command('[file]')
-  .action(file => {
-    createRequire(import.meta.url)(resolve(file))
-  })
+  .action(file => require$(resolve(file)))
 
   cli
   .command(
     'build [dir]', 
     'Build your typescript or javascript code')
+  .option(
+    '--dts [dts]', 
+    '[boolean] Generates corresponding .d.ts file  (default: false)')
   .option(
     '--resolve [resolve]', 
     '[boolean] resolve external dependencies')
@@ -29,7 +31,7 @@ export function run(p: PackageJson) {
     '--minify [minify]', 
     '[boolean] enable/disable minification(default: false)')
   .action(async (dir: string, options: BuildOptions) => { 
-    const { handler, getOptions } = createRequire(import.meta.url)('./build')
+    const { handler, getOptions } = require$('./build')
     await handler(getOptions({ ...options, dir }))
   })
     

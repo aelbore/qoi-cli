@@ -23,6 +23,7 @@ export interface BuildOptions extends CliOptions {
   sourcemap?: boolean
   write?: boolean
   minify?: boolean | 'literals'
+  dts?: boolean | 'only'
 }
 
 export interface BuildOutputOptions extends BuildOptions {
@@ -37,15 +38,18 @@ export type DTSOptions = {
   resolve?: boolean
 }
 
+export type PackageJsonFunc = (pkg?: PackageJson) => PackageJson
+
 export interface Config {
   input?: string | string[]
   external?: string[]
   resolve?: boolean | string[]
-  dts?: boolean | DTSOptions
+  dts?: boolean | 'only' |  DTSOptions
   plugins?: Plugin[]
   swc?: Options
   output?(options: OutputOptions): OutputOptions
   buildEnd?(): Promise<void>
+  packageJson?: boolean | PackageJsonFunc
 }
 
 export interface RequireModule extends NodeRequire {
@@ -56,10 +60,11 @@ export interface CopyPackageOptions {
   pkg?: PackageJson
   legacy?: boolean
   outDir?: string
+  packageJson?(pkg: PackageJson): PackageJson
 }
 
 export type TypesOptions = { 
-  dts?: boolean | DTSOptions, 
+  dts?: boolean | 'only' | DTSOptions, 
   pkg?: PackageJson,
   resolve?: boolean | string[]
 } & RollupOptions
