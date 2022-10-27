@@ -150,7 +150,7 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
       ]
     }),
     plugins: [
-      ...config.plugins || [],
+      ...config?.plugins?.flat() || [],
       ...tsPaths(),
       removeLicense(minify),
       commonjs(),

@@ -45,7 +45,7 @@ export interface Config {
   external?: string[]
   resolve?: boolean | string[]
   dts?: boolean | 'only' |  DTSOptions
-  plugins?: Plugin[]
+  plugins?: Plugin[] | [Plugin[]]
   swc?: Options
   output?(options: OutputOptions): OutputOptions
   buildEnd?(): Promise<void>
@@ -80,3 +80,5 @@ export type getOptions = (options: BuildOptions) => BuildOptions
 export type baseExternals = (pkg?: PackageJson) => string[]
 export type register = (options?: Options) => void
 export type createDefaultConfig = (options?: Options) => void
+
+export const defineConfig = (config: Config) => config
