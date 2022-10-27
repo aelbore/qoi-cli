@@ -23,6 +23,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import MagicString from 'magic-string'
 
 import { swcPlugin } from './swc'
+import { replace } from './replace'
 
 type CreateOptions = {
   config?: Config, 
@@ -90,7 +91,10 @@ const updateExternalWithResolve = (
 const removeLicense = (minify: boolean) => {
   const toMinify = (code: string) => {
     const content = new MagicString(code)
-    return ({ code: content.replace('@license', ''), map: content.generateMap({ hires: true }) })
+    return ({ 
+      code: replace(content.toString(), '@license', ''), 
+      map: content.generateMap({ hires: true }) 
+    })
   }
   return {
     name: 'license',
@@ -158,7 +162,10 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
       removeLicense(minify),
       commonjs(),
       nodeResolve(),
-      swcPlugin(config.swc),
+      swcPlugin({
+        ...config?.swc || {},
+        minify
+      }),
       minifyLiterals(isLiterals)
     ],
     output: createOutputOptions({
