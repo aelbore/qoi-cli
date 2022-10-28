@@ -35,7 +35,7 @@ export interface BuildOutputOptions extends BuildOptions {
 export type DTSOptions = {
   file?: string
   write?: boolean
-  resolve?: boolean | string
+  resolve?: boolean | string[]
 }
 
 export type PackageJsonFunc = (pkg?: PackageJson) => PackageJson
@@ -71,6 +71,7 @@ export interface CopyPackageOptions {
 
 export type TypesOptions = { 
   dts?: boolean | 'only' | DTSOptions, 
+  config?: Config
   pkg?: PackageJson,
   resolve?: boolean | string | string[]
 } & RollupOptions
@@ -81,10 +82,13 @@ export type RegisterOptions = Options & {
   }
 }
 
-export type handler = (options: BuildOptions) => Promise<void>
-export type getOptions = (options: BuildOptions) => BuildOptions
-export type baseExternals = (pkg?: PackageJson) => string[]
-export type register = (options?: Options) => void
-export type createDefaultConfig = (options?: Options) => void
+declare function handler(options: BuildOptions): Promise<void>
+declare function getOptions(options: BuildOptions): BuildOptions
+declare function baseExternals(pkg?: PackageJson): string[]
+declare function register(options?: Options): void
+declare function createDefaultConfig(options?: Options): void
+declare function getTsConfigPaths(tsconfigPath: string): import('typescript').CompilerOptions
 
-export const defineConfig = (config: Config | Config[]) => config
+declare function defineConfig(config: Config | Config[]): Config | Config[]
+
+export { defineConfig, handler, getOptions, baseExternals, register, createDefaultConfig, getTsConfigPaths }

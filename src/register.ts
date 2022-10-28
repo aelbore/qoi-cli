@@ -12,6 +12,8 @@ import sourceMapSupport from 'source-map-support'
 const SourcemapMap = new Map()
 const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
 
+const require$ = createRequire(import.meta.url)
+
 /**
  * Patch the Node CJS loader to suppress the ESM error
  * https://github.com/nodejs/node/blob/069b5df/lib/internal/modules/cjs/loader.js#L1125
@@ -72,13 +74,6 @@ function compile(content: string, file: string, options: Options) {
 }
 
 const getTsConfig = () => {
-  const require$ = createRequire(import.meta.url)
-
-  const getTsConfigPaths = (tsconfigPath: string) => {
-    const { compilerOptions } = require$(tsconfigPath)
-    return compilerOptions?.paths ? { tsconfig: compilerOptions }: undefined 
-  }
-
   const tsconfigPath = resolve('tsconfig.json')
   const tsconfig = existsSync(tsconfigPath) ? getTsConfigPaths(tsconfigPath): undefined
 
@@ -86,6 +81,11 @@ const getTsConfig = () => {
   tsPaths?.register({ tsconfigPath: { compilerOptions: tsconfig.tsconfig } }) 
 
   return tsconfig as import('typescript').CompilerOptions
+}
+
+export function getTsConfigPaths(tsconfigPath: string) {
+  const { compilerOptions } = require$(tsconfigPath)
+  return compilerOptions?.paths ? { tsconfig: compilerOptions }: undefined 
 }
 
 export function createDefaultConfig(options?: Options) {

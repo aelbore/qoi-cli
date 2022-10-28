@@ -188,12 +188,19 @@ const build = async (options: RollupOptions, write: boolean = true) => {
   }))
 }
 
-const dtsBuild = async (options: TypesOptions) => {
-  const { input, output: o, external, pkg, resolve, dts } = options
-  const dtsPlugin = await import('rollup-plugin-dts')
+const getDtsResolve = (resolve: boolean | string[]) => {
+  if (resolve && typeof resolve == 'boolean') {
+    return resolve
+  }
+  if (resolve && Array.isArray(resolve) && resolve.length > 0) {
+    return true
+  }
+  return false 
+}
 
-  const resolve$ = Array.isArray(resolve) 
-    ? resolve: typeof resolve == 'string' ? resolve.split(','): []
+const dtsBuild = async (options: TypesOptions) => {
+  const { input, output: o, external, pkg, dts, config } = options
+  const dtsPlugin = await import('rollup-plugin-dts')
 
   const createDefaultOptions = () => {
     const output = Array.isArray(o) ? o: [ o ]
@@ -209,10 +216,19 @@ const dtsBuild = async (options: TypesOptions) => {
   }
   const opts = typeof dts == 'boolean' || typeof dts == 'string'
     ? createDefaultOptions(): { ...createDefaultOptions(), ...dts || {} }
+    
+  const resolve = typeof dts == 'string' && dts === 'only' ? config.resolve: opts.resolve
 
   const bundle = await rollup({
     input, 
-    external,
+    external: updateExternalWithResolve({
+      resolve,
+      external: [        
+        ...((external || '') as string).split(','),
+        ...config.external || [],
+        ...baseExternals(pkg)
+      ]
+    }),
     plugins: [
       {
         name: 'style',
@@ -222,8 +238,7 @@ const dtsBuild = async (options: TypesOptions) => {
         }
       },
       dtsPlugin.default({ 
-        respectExternal: (opts.resolve as boolean) || 
-         (typeof resolve == 'boolean' ? resolve: resolve$.length ? true: false) as boolean         
+        respectExternal: getDtsResolve(resolve) 
       })
     ]
   })
@@ -351,8 +366,10 @@ export async function handler(options: BuildOptions) {
         && build(opts),
       (options.dts || c.dts) 
         && dtsBuild({ 
-            ...opts, dts: options.dts || c.dts, 
-            resolve: c.resolve || options.resolve
+            ...opts,
+            config: c,
+            external: options.external,
+            dts: c.dts || options.dts
           }),
       copyReadMeFile({ output: options.outDir }),
       copyPackge({ 
