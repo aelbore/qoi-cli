@@ -20,7 +20,10 @@ export function run(p: PackageJson) {
     'Build your typescript or javascript code')
   .option(
     '-f, --format <format>', 
-    '[string] Specifies the format of the generated bundle (default: "es")')    
+    '[string] Specifies the format of the generated bundle (default: "es")')   
+  .option(
+    '--sourcemap', 
+    '[boolean] output source maps for build (default: false)') 
   .option(
     '--dts [dts]', 
     '[boolean] Generates corresponding .d.ts file  (default: false)')

@@ -24,6 +24,7 @@ import MagicString from 'magic-string'
 
 import { swcPlugin } from './swc'
 import { replace } from './replace'
+import { Options } from '@swc/core'
 
 type CreateOptions = {
   config?: Config, 
@@ -135,7 +136,7 @@ const createOutputOptions = (options: BuildOutputOptions) => {
       format: (options.module ? 'es': format) as ModuleFormat,
       sourcemap,
       entryFileNames: filename,
-      chunkFileNames: '[name].[hash].js'
+      chunkFileNames: '[name].[hash].js',
     } as OutputOptions
     return output?.(outputOptions) ?? outputOptions
   })
@@ -145,7 +146,9 @@ const createOutputOptions = (options: BuildOutputOptions) => {
 
 const createOptions = ({ config, options, pkg }: CreateOptions) => {
   const isLiterals = (typeof options.minify == 'string') && options.minify.includes('literals')
-  const minify = (typeof options.minify == 'boolean') ? options.minify: isLiterals
+  const minify = (typeof options.minify == 'boolean') ? options.minify: isLiterals  
+  const swc = { ...config.swc, sourceMaps: config.sourcemap || options.sourcemap || false, minify } as Options
+
   return {
     input: config.input || getEntryFile({ pkgName: pkg.name, dir: options.dir }),
     external: updateExternalWithResolve({
@@ -164,14 +167,12 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
       removeLicense(minify),
       commonjs(),
       nodeResolve(),
-      swcPlugin({
-        ...config?.swc || {},
-        minify
-      }),
+      swcPlugin(swc),
       minifyLiterals(isLiterals)
     ],
     output: createOutputOptions({
       ...options,
+      sourcemap: swc.sourceMaps as boolean,
       pkg,
       output: config.output
     })

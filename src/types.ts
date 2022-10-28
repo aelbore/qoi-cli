@@ -51,6 +51,7 @@ export interface Config {
   external?: string[]
   resolve?: boolean | string[] 
   dts?: boolean | 'only' |  DTSOptions
+  sourcemap?: boolean
   plugins?: InputPlugin
   swc?: Options
   output?(options: OutputOptions): OutputOptions
