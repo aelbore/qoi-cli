@@ -148,7 +148,6 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
   const isLiterals = (typeof options.minify == 'string') && options.minify.includes('literals')
   const minify = (typeof options.minify == 'boolean') ? options.minify: isLiterals  
   const swc = { ...config.swc, sourceMaps: config.sourcemap || options.sourcemap || false, minify } as Options
-
   return {
     input: config.input || getEntryFile({ pkgName: pkg.name, dir: options.dir }),
     external: updateExternalWithResolve({
@@ -356,10 +355,11 @@ export function getOptions(options: BuildOptions) {
 
 export async function handler(options: BuildOptions) {
   const config = loadConfig(), pkg = getPackage()
-  const configs = Array.isArray(config) ? config: [ config ]
+  const configs$ = Array.isArray(config) ? config: [ config ]
+  const configs = options.name ? configs$.filter(c => options.name.split(',').includes(c.name)): configs$
   
   options.cleanOutDir && rmSync(options.outDir, { force: true, recursive: true })
-
+  
   await Promise.all(configs.map(async c => {
     const opts = createOptions({ config: c, options, pkg })
     await Promise.all([ 

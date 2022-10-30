@@ -19,6 +19,9 @@ export function run(p: PackageJson) {
     'build [dir]', 
     'Build your typescript or javascript code')
   .option(
+    '--name <name>', 
+    '[string] name of the config to execute')   
+  .option(
     '-f, --format <format>', 
     '[string] Specifies the format of the generated bundle (default: "es")')   
   .option(

@@ -14,6 +14,7 @@ export interface CliOptions {
 }
 
 export interface BuildOptions extends CliOptions {
+  name?: string
   outDir?: string
   module?: boolean
   format?: ModuleFormat
@@ -47,6 +48,7 @@ export interface Plugin extends RollupPlugin {
 export type InputPlugin = Plugin | InputPlugin[]
 
 export interface Config {
+  name?: string
   input?: string | string[] | {[key: string]: string}
   external?: string[]
   resolve?: boolean | string[] 
