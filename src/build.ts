@@ -112,8 +112,8 @@ const minifyLiterals = (isLiterals: boolean) => {
   }
   return {
     name: 'minify-literals',
-    async transform(code: string) {
-      return isLiterals && await toMinify(code)
+    transform(code: string) {
+      return isLiterals && toMinify(code)
     } 
   }
 }
@@ -356,12 +356,18 @@ export function getOptions(options: BuildOptions) {
 export async function handler(options: BuildOptions) {
   const config = loadConfig(), pkg = getPackage()
   const configs$ = Array.isArray(config) ? config: [ config ]
-  const configs = options.name ? configs$.filter(c => options.name.split(',').includes(c.name)): configs$
   
-  options.cleanOutDir && rmSync(options.outDir, { force: true, recursive: true })
+  const names = options.name?.split(',') || []
+  const configs = names.length ? configs$.filter(c => options.name.split(',').includes(c.name)): configs$
+  
+  !names.length && options.cleanOutDir && rmSync(options.outDir, { force: true, recursive: true })
   
   await Promise.all(configs.map(async c => {
     const opts = createOptions({ config: c, options, pkg })
+    if (names.find(n => n.includes(c.name))) {
+      const outDir = Array.isArray(opts.output) ? opts.output[0].dir: opts.output.dir
+      options.cleanOutDir && rmSync(outDir || options.outDir, { force: true, recursive: true })
+    }
     await Promise.all([ 
       ((typeof options.dts === 'boolean' && options.dts) || !isDtsOnly(options, c)) 
         && build(opts),

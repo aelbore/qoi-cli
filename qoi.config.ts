@@ -59,7 +59,9 @@ export default defineConfig([
   },
   {
     input: './src/types.ts',
-    resolve: [ 'types-package-json' ],
+    resolve: [ 
+      'types-package-json' 
+    ],
     packageJson(pkg: PackageJson) {
       pkg.exports = {
         ...pkg.exports || {},
