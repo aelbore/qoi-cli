@@ -3,6 +3,7 @@ import type { PackageJson } from 'types-package-json'
 
 import { createRequire } from 'module'
 import { resolve } from 'node:path'
+import { existsSync } from 'node:fs'
 
 import { cac } from 'cac'
 
@@ -12,7 +13,12 @@ export function run(p: PackageJson) {
   
   cli
   .command('[file]')
-  .action(file => require$(resolve(file)))
+  .action(file => {
+    const paths = [ resolve(file), resolve('node_modules', file) ]
+    for (const path$ of paths) {
+      existsSync(path$) && require$(path$)
+    }
+  })
 
   cli
   .command(
