@@ -297,13 +297,31 @@ const copyPackge = async (options: CopyPackageOptions) => {
   hasLegacy && await createCommonjsPackageFile(outDir)
 }
 
+const createPackageConfigPath = (configFile: string) => {
+  const configs = [ 'qoi.config.ts', 'qoi.config.js', 'qoi.config.mjs' ]
+  const require$ = (config: string) => {
+    const config$ = requireModule(configFile + '/' + config)?.default
+    return typeof config$ == 'function' ? config$(): config$
+  }
+  for (const config of configs) {
+    const CONFIG_FULL_PATH = join(baseDir(), 'node_modules', configFile, config)
+    if (existsSync(CONFIG_FULL_PATH)) {
+      return (statSync(CONFIG_FULL_PATH).isFile() 
+        ? require$(config)
+        : {}) as Config | Config[]
+    }
+  }
+  return null
+}
+
 function loadConfig(configFile?: string) {
   const CONFIG_FULL_PATH = join(baseDir(), configFile ?? resolveConfigFile() ?? '')
-  return (
-    statSync(CONFIG_FULL_PATH).isFile() && existsSync(CONFIG_FULL_PATH) 
-      ? requireModule(CONFIG_FULL_PATH)?.default
-      : {}
-  ) as Config | Config[]
+  if (existsSync(CONFIG_FULL_PATH)) {
+    return (statSync(CONFIG_FULL_PATH).isFile() 
+      ? requireModule(CONFIG_FULL_PATH)?.default 
+      : {}) as Config | Config[]
+  }
+  return (configFile ? createPackageConfigPath(configFile) ?? {}: {}) as Config | Config[]
 }
 
 const getEntryFile = (options?: EntryFile) => {
@@ -354,7 +372,7 @@ export function getOptions(options: BuildOptions) {
 }
 
 export async function handler(options: BuildOptions) {
-  const config = loadConfig(), pkg = getPackage()
+  const config = loadConfig(options.c ?? options.config), pkg = getPackage()
   const configs$ = Array.isArray(config) ? config: [ config ]
   
   const names = options.name?.split(',') || []

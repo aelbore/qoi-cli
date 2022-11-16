@@ -11,6 +11,8 @@ export type PackageJson = Package & {
 
 export interface CliOptions {
   dir?: string
+  config?: string
+  c?: string
 }
 
 export interface BuildOptions extends CliOptions {

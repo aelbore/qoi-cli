@@ -21,40 +21,20 @@ export function run(p: PackageJson) {
   })
 
   cli
-  .command(
-    'build [dir]', 
-    'Build your typescript or javascript code')
-  .option(
-    '--name <name>', 
-    '[string] name of the config to execute')   
-  .option(
-    '-f, --format <format>', 
-    '[string] Specifies the format of the generated bundle (default: "es")')   
-  .option(
-    '--sourcemap', 
-    '[boolean] output source maps for build (default: false)') 
-  .option(
-    '--dts [dts]', 
-    '[boolean] Generates corresponding .d.ts file  (default: false)')
-  .option(
-    '--resolve [resolve]', 
-    '[boolean] resolve external dependencies')
-  .option(
-    '--external <external>', 
-    '[string] Specify external dependencies')
-  .option(
-    '--cleanOutDir', 
-    '[boolean] force empty outDir')
-  .option(
-    '--minify [minify]', 
-    '[boolean] enable/disable minification(default: false)')
+  .command('build [dir]', 'Build your typescript or javascript code')
+  .option('-c, --config <file>', `[string] use specified config file`)
+  .option('--name <name>', '[string] name of the config to execute')   
+  .option('-f, --format <format>', '[string] Specifies the format of the generated bundle (default: "es")')   
+  .option('--sourcemap', '[boolean] output source maps for build (default: false)') 
+  .option('--dts [dts]', '[boolean] Generates corresponding .d.ts file  (default: false)')
+  .option('--resolve [resolve]', '[boolean] resolve external dependencies')
+  .option('--external <external>', '[string] Specify external dependencies')
+  .option('--cleanOutDir', '[boolean] force empty outDir')
+  .option('--minify [minify]', '[boolean] enable/disable minification(default: false)')
   .action(async (dir: string, options: BuildOptions) => { 
     const { handler, getOptions } = require$('./build')
     await handler(getOptions({ ...options, dir }))
   })
     
-  cli
-  .help()
-  .version(p.version)
-  .parse()
+  cli.help().version(p.version).parse()
 }

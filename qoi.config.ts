@@ -1,6 +1,7 @@
 import type { OutputOptions, PreRenderedChunk } from 'rollup'
+import type { PackageJson } from 'types'
+
 import { defineConfig } from './src/build'
-import { PackageJson } from 'types'
 
 import json from '@rollup/plugin-json'
 import fs from 'fs/promises'
