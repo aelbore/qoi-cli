@@ -118,12 +118,17 @@ const minifyLiterals = (isLiterals: boolean) => {
   }
 }
 
-const tsPaths = () => {
-  const require = createRequire(import.meta.url)
+const geTsConfigPaths = () => {
+  const require$ = createRequire(import.meta.url)
   const tsconfigPath = join(process.cwd(), 'tsconfig.json')
-  
-  const tsconfig = process.platform.includes('win32') && existsSync(tsconfigPath) ? require(tsconfigPath): undefined
-  return tsconfig?.compilerOptions?.paths ? [ require('rollup-plugin-tsconfig-paths')() ]: []
+  return existsSync(tsconfigPath) 
+    ? require$(tsconfigPath)?.compilerOptions?.paths ?? undefined
+    : undefined
+}
+
+const tsPaths = (dts?: boolean) => {
+  return (geTsConfigPaths() && (dts || process.platform.includes('win32')))
+    ? [ requireModule('rollup-plugin-tsconfig-paths').default() ]: []
 }
 
 const createOutputOptions = (options: BuildOutputOptions) => {
@@ -237,6 +242,7 @@ const dtsBuild = async (options: TypesOptions) => {
             && { code: '' }
         }
       },
+      ...tsPaths(true),
       dtsPlugin.default({ 
         respectExternal: getDtsResolve(resolve) 
       })
