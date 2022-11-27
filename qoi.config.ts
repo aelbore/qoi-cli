@@ -17,12 +17,14 @@ export default defineConfig([
       'source-map-support',
       'picomatch',
       'magic-string',
-      'rollup-plugin-dts'
+      'rollup-plugin-dts',
+      'dotenv'
     ],
     plugins: [ json() ],
     output(options: OutputOptions) {
       options.minifyInternalExports = false
       options.manualChunks = (id: string) => {
+        if (id.includes('dotenv')) return 'dotenv'
         if (id.includes('rollup-plugin-dts')) return 'rollup-plugin-dts'
         if (id.includes('@rollup')) return 'build.vendor'
         if (id.includes('node_modules')) return 'vendor'
@@ -31,6 +33,7 @@ export default defineConfig([
       }
       options.chunkFileNames = (chunkInfo: PreRenderedChunk) => { 
         switch (chunkInfo.name) {
+          case 'dotenv': return 'dotenv.js'
           case 'register': return 'register.js'
           case 'build': return 'build.js'
           default: return '[name].[hash].js' 
@@ -68,7 +71,8 @@ export default defineConfig([
         ...pkg.exports || {},
         '.': { default: './qoi-cli.js' },
         './register': './register.js',
-        './build': './build.js'
+        './build': './build.js',
+        './dotenv': './dotenv.js'
       }
       return pkg
     },

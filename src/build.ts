@@ -1,6 +1,5 @@
 import type { ModuleFormat, OutputOptions, RollupOptions } from 'rollup'
 import type { 
-  RequireModule, 
   Config, 
   BuildOptions, 
   PackageJson, 
@@ -11,9 +10,9 @@ import type {
   PackageJsonFunc
 } from 'types'
 
-import { existsSync, statSync, rmSync, mkdirSync } from 'node:fs'
+import { existsSync, statSync, rmSync, mkdirSync, stat } from 'node:fs'
 import { copyFile, mkdir, writeFile } from 'node:fs/promises'
-import { dirname, join, basename } from 'node:path'
+import { dirname, join, basename, resolve } from 'node:path'
 import { createRequire, builtinModules } from 'node:module'
 
 import { rollup } from 'rollup'
@@ -21,6 +20,8 @@ import { rollup } from 'rollup'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import MagicString from 'magic-string'
+
+import env from './env'
 
 import { swcPlugin } from './swc'
 import { replace } from './replace'
@@ -46,6 +47,10 @@ const baseDir = () => {
   return process.env.APP_ROOT_PATH ?? process.cwd()
 }
 
+const configBaseDir = () => {
+  return env.configRootDir ?? process.cwd()
+}
+
 const getPackageNameScope = (name: string) => {
   const names = name.split('/')
   return (names.length > 1) ? names[1]: names.pop()
@@ -56,16 +61,7 @@ const getPackage = (filePath?: string) => {
   return (requireModule(pkgPath) as any) as PackageJson
 }
 
-const resolveConfigFile = () => {
-  const configs = [ 'qoi.config.ts', 'qoi.config.js', 'qoi.config.mjs' ]
-  for (const config of configs) {
-    const CONFIG_FULL_PATH = join(baseDir(), config)
-    if (existsSync(CONFIG_FULL_PATH)) return config
-  }
-  return null
-}
-
-const requireModule = (modulePath: string): RequireModule => {
+const requireModule = (modulePath: string) => {
   try { return require(modulePath)
   } catch { return createRequire(import.meta.url)(modulePath) }
 }
@@ -303,29 +299,39 @@ const copyPackge = async (options: CopyPackageOptions) => {
   hasLegacy && await createCommonjsPackageFile(outDir)
 }
 
-const createPackageConfigPath = (configFile: string) => {
+const configPaths = () => {
   const configs = [ 'qoi.config.ts', 'qoi.config.js', 'qoi.config.mjs' ]
-  const require$ = (config: string) => {
-    const config$ = requireModule(configFile + '/' + config)?.default
-    return typeof config$ == 'function' ? config$(): config$
-  }
+  return [ ...configs, ...configs.map(c => join('dist', c)) ]
+}
+
+const resolveConfigFile = (...directories: string[]) => {
+  const configs = configPaths()
   for (const config of configs) {
-    const CONFIG_FULL_PATH = join(baseDir(), 'node_modules', configFile, config)
-    if (existsSync(CONFIG_FULL_PATH)) {
-      return (statSync(CONFIG_FULL_PATH).isFile() 
-        ? require$(config)
-        : {}) as Config | Config[]
-    }
+    const rootDir = resolve(configBaseDir())
+    const CONFIG_FULL_PATH = join(rootDir, ...directories || [], config)
+    if (existsSync(CONFIG_FULL_PATH) && statSync(CONFIG_FULL_PATH).isFile()) return CONFIG_FULL_PATH
   }
   return null
 }
 
+const requireConfig$ = (cPath: string) => {
+  const config$ = requireModule(cPath)?.default
+  return (typeof config$ == 'function' ? config$(): config$) as Config | Config[]
+}
+
+const createPackageConfigPath = (configFile: string) => {
+  const config = resolveConfigFile('node_modules', configFile)
+  return config ? requireConfig$(configFile + '/' + config): null
+}
+
 function loadConfig(configFile?: string) {
-  const CONFIG_FULL_PATH = join(baseDir(), configFile ?? resolveConfigFile() ?? '')
-  if (existsSync(CONFIG_FULL_PATH)) {
-    return (statSync(CONFIG_FULL_PATH).isFile() 
-      ? requireModule(CONFIG_FULL_PATH)?.default 
-      : {}) as Config | Config[]
+  const CONFIG_FULL_PATH = join(configBaseDir(), configFile || '')
+  if (existsSync(CONFIG_FULL_PATH) && statSync(CONFIG_FULL_PATH).isFile()) {
+    return requireConfig$(CONFIG_FULL_PATH)
+  }
+  const config = resolveConfigFile()
+  if (config) {
+    return requireConfig$(config) ?? {}
   }
   return (configFile ? createPackageConfigPath(configFile) ?? {}: {}) as Config | Config[]
 }
