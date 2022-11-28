@@ -21,8 +21,6 @@ import nodeResolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import MagicString from 'magic-string'
 
-import env from './env'
-
 import { swcPlugin } from './swc'
 import { replace } from './replace'
 import { Options } from '@swc/core'
@@ -48,7 +46,7 @@ const baseDir = () => {
 }
 
 const configBaseDir = () => {
-  return env.configRootDir ?? process.cwd()
+  return process.env.QOI_CONFIG_ROOT_DIR ?? process.cwd()
 }
 
 const getPackageNameScope = (name: string) => {

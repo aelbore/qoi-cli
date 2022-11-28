@@ -72,7 +72,7 @@ export default defineConfig([
         '.': { default: './qoi-cli.js' },
         './register': './register.js',
         './build': './build.js',
-        './dotenv': './dotenv.js'
+        './dotenv.js': './dotenv.js'
       }
       return pkg
     },

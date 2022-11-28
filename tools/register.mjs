@@ -27,26 +27,27 @@ const external = [
   ...Object.keys(pkg.dependencies || {}),
   ...Object.keys(pkg.devDependencies || {}),
   ...builtinModules,
-  './register.js'
+  './register.js',
+  './dotenv.js'
 ]
 
-const build = async () => {
+const build = async (input, plugins) => {
   const bundle = await rollup({
-    input: './src/register.ts',
+    input,
     external,
-    plugins: [ swcPlugin() ]
+    plugins: [ swcPlugin(), ...plugins || [] ]
   })
   await bundle.write({ dir: 'dist', format: 'es' })
 }
 
-const dtsBundle = async () => {
+const dtsBundle = async (input, file) => {
   const build = await rollup({
-    input: './src/register.ts',
+    input,
     external,
     plugins: [ dts() ],
   })
   return build.write({ 
-    file: join('dist', 'register.d.ts'), 
+    file: join('dist', file), 
     format: 'es' 
   })
 }
@@ -56,7 +57,11 @@ const destPath = join(...[ 'node_modules', 'qoi-cli' ])
 await rm(destPath, { recursive: true, force: true })
 await mkdir(destPath, { recursive: true })
 
-await Promise.all([ build(), dtsBundle() ])
+await Promise.all([ 
+  build('./src/register.ts'),
+  build('./src/dotenv.ts'),
+  dtsBundle('./src/register.ts', 'register.d.ts')
+])
 await rename('dist', destPath)
 await writeFile(
   join(destPath, 'package.json'), 
@@ -68,7 +73,11 @@ await writeFile(
       "./register": {
         "import": "./register.js",
         "types": "./register.d.ts"
-      }
+      },
+      "./dotenv.js": {
+        "import": "./dotenv.js",
+        "types": "./dotenv.d.ts"
+      },
     }
   }, null, '\t')
 )
