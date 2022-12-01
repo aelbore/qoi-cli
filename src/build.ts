@@ -396,6 +396,7 @@ export async function handler(options: BuildOptions) {
       const outDir = Array.isArray(opts.output) ? opts.output[0].dir: opts.output.dir
       options.cleanOutDir && rmSync(outDir || options.outDir, { force: true, recursive: true })
     }
+    requireModule('./dotenv').parse$(c.env)
     await Promise.all([ 
       ((typeof options.dts === 'boolean' && options.dts) || !isDtsOnly(options, c)) 
         && build(opts),

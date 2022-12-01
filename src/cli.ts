@@ -3,17 +3,30 @@ import type { PackageJson } from 'types-package-json'
 
 import { createRequire } from 'module'
 import { resolve } from 'node:path'
-import { existsSync } from 'node:fs'
+import { statSync, existsSync } from 'node:fs'
 
 import { cac } from 'cac'
 
 export function run(p: PackageJson) {
   const cli = cac('qoi')
   const require$ = createRequire(import.meta.url)
+
+  const dotenv = (env?: string) => {
+    const dotenv = require$('./dotenv')
+    if (existsSync(env) && statSync(env).isFile()) {
+      Object.assign(process.env, dotenv.config$({ path: env }))
+    }
+    if (existsSync('.env')) {
+      Object.assign(process.env, dotenv.config$())
+    }
+    const content = env?.split?.(',')?.join('\n')
+    Object.assign(process.env, content)
+  }
   
   cli
   .command('[file]')
   .action(file => {
+    dotenv()
     const paths = [ resolve(file), resolve('node_modules', file) ]
     for (const path$ of paths) {
       existsSync(path$) && require$(path$)
@@ -31,7 +44,9 @@ export function run(p: PackageJson) {
   .option('--external <external>', '[string] Specify external dependencies')
   .option('--cleanOutDir', '[boolean] force empty outDir')
   .option('--minify [minify]', '[boolean] enable/disable minification(default: false)')
+  .option('--env <file>', `[string] env variables or path of env`)
   .action(async (dir: string, options: BuildOptions) => { 
+    dotenv(options.env)
     const { handler, getOptions } = require$('./build')
     await handler(getOptions({ ...options, dir }))
   })

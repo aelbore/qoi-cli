@@ -50,10 +50,12 @@ export default defineConfig([
   {
     input: './src/cli.ts',
     external: [
-      './build'
+      './build',
+      './dotenv'
     ],
     resolve: [ 'cac' ],
     output(options: OutputOptions) {
+      options.minifyInternalExports = false
       options.entryFileNames = 'cli.mjs'
       return options
     },

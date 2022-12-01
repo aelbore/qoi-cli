@@ -27,6 +27,7 @@ export interface BuildOptions extends CliOptions {
   write?: boolean
   minify?: boolean | 'literals'
   dts?: boolean | 'only'
+  env?: string
 }
 
 export interface BuildOutputOptions extends BuildOptions {
@@ -61,6 +62,7 @@ export interface Config {
   output?(options: OutputOptions): OutputOptions
   buildEnd?(): Promise<void>
   packageJson?: boolean | PackageJsonFunc
+  env?: {[key: string]: string}
 }
 
 export interface RequireModule extends NodeRequire {
