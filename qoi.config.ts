@@ -5,6 +5,7 @@ import { defineConfig } from './src/build'
 
 import json from '@rollup/plugin-json'
 import fs from 'fs/promises'
+
 import { existsSync } from 'fs'
 
 export default defineConfig([
@@ -18,13 +19,17 @@ export default defineConfig([
       'picomatch',
       'magic-string',
       'rollup-plugin-dts',
-      'dotenv'
+      'dotenv',
+      'rollup-plugin-tsconfig-paths',
+      'typescript-paths'
     ],
     plugins: [ json() ],
     output(options: OutputOptions) {
       options.minifyInternalExports = false
       options.manualChunks = (id: string) => {
         if (id.includes('dotenv')) return 'dotenv'
+        if (id.includes('minify-literals')) return 'minify-literals'
+        if (id.includes('ts-paths') || id.includes('rollup-plugin-tsconfig-paths') || id.includes('typescript-paths')) return 'ts-paths'
         if (id.includes('rollup-plugin-dts')) return 'rollup-plugin-dts'
         if (id.includes('@rollup')) return 'build.vendor'
         if (id.includes('node_modules')) return 'vendor'
@@ -34,6 +39,8 @@ export default defineConfig([
       options.chunkFileNames = (chunkInfo: PreRenderedChunk) => { 
         switch (chunkInfo.name) {
           case 'dotenv': return 'dotenv.js'
+          case 'ts-paths': return 'ts-paths.js'
+          case 'minify-literals': return 'minify-literals.js'
           case 'register': return 'register.js'
           case 'build': return 'build.js'
           default: return '[name].[hash].js' 
@@ -74,7 +81,9 @@ export default defineConfig([
         '.': { default: './qoi-cli.js' },
         './register': './register.js',
         './build': './build.js',
-        './dotenv.js': './dotenv.js'
+        './dotenv.js': './dotenv.js',
+        './minify-literals.js': './minify-literals.js',
+        './ts-paths.js': './ts-paths.js'
       }
       return pkg
     },

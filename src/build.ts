@@ -1,4 +1,5 @@
 import type { ModuleFormat, OutputOptions, RollupOptions } from 'rollup'
+import type { Options } from '@swc/core'
 import type { 
   Config, 
   BuildOptions, 
@@ -10,7 +11,7 @@ import type {
   PackageJsonFunc
 } from 'types'
 
-import { existsSync, statSync, rmSync, mkdirSync, stat } from 'node:fs'
+import { existsSync, statSync, rmSync, mkdirSync } from 'node:fs'
 import { copyFile, mkdir, writeFile } from 'node:fs/promises'
 import { dirname, join, basename, resolve } from 'node:path'
 import { createRequire, builtinModules } from 'node:module'
@@ -23,7 +24,6 @@ import MagicString from 'magic-string'
 
 import { swcPlugin } from './swc'
 import { replace } from './replace'
-import { Options } from '@swc/core'
 
 type CreateOptions = {
   config?: Config, 
@@ -99,19 +99,6 @@ const removeLicense = (minify: boolean) => {
   }
 }
 
-const minifyLiterals = (isLiterals: boolean) => {
-  const toMinify = (code: string) => {
-    const minify = createRequire(import.meta.url)('minify-html-literals')
-    return minify.minifyHTMLLiterals(code)
-  }
-  return {
-    name: 'minify-literals',
-    transform(code: string) {
-      return isLiterals && toMinify(code)
-    } 
-  }
-}
-
 const geTsConfigPaths = () => {
   const require$ = createRequire(import.meta.url)
   const tsconfigPath = join(process.cwd(), 'tsconfig.json')
@@ -121,8 +108,10 @@ const geTsConfigPaths = () => {
 }
 
 const tsPaths = (dts?: boolean) => {
-  return (geTsConfigPaths() && (dts || process.platform.includes('win32')))
-    ? [ requireModule('rollup-plugin-tsconfig-paths').default() ]: []
+  return (
+    geTsConfigPaths() 
+    && (dts || process.platform.includes('win32'))
+  ) ? [ requireModule('./ts-paths').tsconfigPaths() ]: []
 }
 
 const createOutputOptions = (options: BuildOutputOptions) => {
@@ -163,10 +152,13 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
         : config.plugins ? [ config.plugins ]: [],
       ...tsPaths(),
       removeLicense(minify),
-      commonjs(),
+      commonjs({
+        transformMixedEsModules: true,
+        requireReturnsDefault: true
+      }),
       nodeResolve(),
       swcPlugin(swc),
-      minifyLiterals(isLiterals)
+      ...isLiterals ? [ requireModule('./minify-literals').minifyLiterals() ]: []
     ],
     output: createOutputOptions({
       ...options,
