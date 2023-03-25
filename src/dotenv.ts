@@ -2,7 +2,8 @@ import { DotenvConfigOptions, config, parse } from 'dotenv'
 
 export const config$ = (options?: DotenvConfigOptions) => config(options || {})
 
-export const parse$ = (envs: {[key: string]: string}) => {
+export const parse$ = (envs: {[key: string]: string} | string) => {
+  if (typeof envs == 'string') return parse(envs)  
   const envs$ = Object.keys(envs || {})
   if (envs$.length) {
     const values = envs$.reduce((p, c) => {

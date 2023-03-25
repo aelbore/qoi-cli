@@ -20,7 +20,7 @@ export function run(p: PackageJson) {
       Object.assign(process.env, dotenv.config$())
     }
     const content = env?.split?.(',')?.join('\n')
-    Object.assign(process.env, content)
+    Object.assign(process.env, dotenv.parse$(content))
   }
   
   cli
