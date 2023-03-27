@@ -314,6 +314,11 @@ const createPackageConfigPath = (configFile: string) => {
   return config ? requireConfig$(configFile + '/' + config): null
 }
 
+const createConfigFile = (configFile: string) => {
+  const file = join(configBaseDir(), 'node_modules', configFile)
+  return existsSync(file) && statSync(file).isFile() ? requireConfig$(file): null
+}
+
 function loadConfig(configFile?: string) {
   const CONFIG_FULL_PATH = join(configBaseDir(), configFile || '')
   if (existsSync(CONFIG_FULL_PATH) && statSync(CONFIG_FULL_PATH).isFile()) {
@@ -323,7 +328,10 @@ function loadConfig(configFile?: string) {
   if (config) {
     return requireConfig$(config) ?? {}
   }
-  return (configFile ? createPackageConfigPath(configFile) ?? {}: {}) as Config | Config[]
+  return (configFile 
+    ? createPackageConfigPath(configFile) ?? createConfigFile(configFile) ?? {}
+    : {}
+  ) as Config | Config[]
 }
 
 const getEntryFile = (options?: EntryFile) => {
