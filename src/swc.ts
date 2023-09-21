@@ -3,7 +3,7 @@ import type { Plugin } from 'rollup'
 import { existsSync, statSync } from 'fs'
 import { dirname, extname, join } from 'path'
 
-import { Options, transformSync } from '@swc/core'
+import { Options, minifySync, transformSync } from '@swc/core'
 import { createDefaultConfig } from './register'
 
 const EXTENSIONS = [ 'ts', 'tsx' ]
@@ -40,19 +40,12 @@ function pathResolver(extensions?: string[]) {
   }
 }
 
-function minify(code: string, options?: Options) {
-  return transformSync(code, {
-    jsc: {
-      parser: { syntax: 'ecmascript' },
-      target: options?.jsc?.target ?? 'es2022',
-      minify: {
-        compress: true,
-        mangle:  { toplevel: true }
-      }
-    },
-    sourceMaps: (options && typeof options?.sourceMaps == 'string')
-      ? true: options?.sourceMaps,
-    minify: true
+const minify = (code: string, options: Options) => {
+  return minifySync(code, {
+    sourceMap: (typeof options?.sourceMaps == 'string') ? true: options.sourceMaps,
+    module: options?.jsc?.minify?.module ?? true,
+    compress: true,
+    mangle: { toplevel: true }
   })
 }
 
@@ -70,7 +63,7 @@ export function swcPlugin(options?: Options) {
       return filter(id) && transformSync(code, { filename: id, ...opts })
     },
     renderChunk(code: string) {
-      return options?.minify ? minify(code, opts): null
+      return options?.minify? minify(code, options): null
     }
   } as Plugin
 }
