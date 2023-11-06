@@ -28,6 +28,7 @@ export default defineConfig([
       options.minifyInternalExports = false
       options.manualChunks = (id: string) => {
         if (id.includes('dotenv')) return 'dotenv'
+        if (id.includes('picomatch')) return 'picomatch'
         if (id.includes('minify-literals')) return 'minify-literals'
         if (id.includes('ts-paths') || id.includes('rollup-plugin-tsconfig-paths') || id.includes('typescript-paths')) return 'ts-paths'
         if (id.includes('rollup-plugin-dts')) return 'rollup-plugin-dts'
@@ -36,14 +37,14 @@ export default defineConfig([
         if (id.includes('register')) return 'register'
         if (id.includes('build')) return 'build'
       }
-      options.chunkFileNames = (chunkInfo: PreRenderedChunk) => { 
+      options.chunkFileNames = (chunkInfo: PreRenderedChunk) => {
         switch (chunkInfo.name) {
           case 'dotenv': return 'dotenv.js'
           case 'ts-paths': return 'ts-paths.js'
           case 'minify-literals': return 'minify-literals.js'
           case 'register': return 'register.js'
           case 'build': return 'build.js'
-          default: return '[name].[hash].js' 
+          default: return '[name].[hash].js'
         }
       }
       return options
@@ -72,8 +73,8 @@ export default defineConfig([
   },
   {
     input: './src/types.ts',
-    resolve: [ 
-      'types-package-json' 
+    resolve: [
+      'types-package-json'
     ],
     packageJson(pkg: PackageJson) {
       pkg.exports = {
