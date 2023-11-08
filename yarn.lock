@@ -237,17 +237,17 @@
   dependencies:
     undici-types "~5.25.1"
 
-"@types/node@^20.8.10":
-  version "20.8.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.8.10.tgz#a5448b895c753ae929c26ce85cab557c6d4a365e"
-  integrity sha512-TlgT8JntpcbmKUFzjhsyhGfP2fsiz1Mv56im6enJ905xG1DAYesxJaeSbGqQmAw8OWPdhyJGhGSQGKRNJ45u9w==
+"@types/node@^20.9.0":
+  version "20.9.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.9.0.tgz#bfcdc230583aeb891cf51e73cfdaacdd8deae298"
+  integrity sha512-nekiGu2NDb1BcVofVcEKMIwzlx4NjHlcjhoxxKBNLtz15Y1z7MYf549DFvkHSId02Ax6kGwWntIBPC3l/JZcmw==
   dependencies:
     undici-types "~5.26.4"
 
-"@types/picomatch@^2.3.2":
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/@types/picomatch/-/picomatch-2.3.2.tgz#1f677d5105c122c5680f2f1a5512309844fdd4f5"
-  integrity sha512-I+BytjxOlNYA285zP/3dVCRcE+OAvgHQZQt26MP7T7JbZ9DM/3W2WfViU1XuLypCzAx8PTC+MlYO3WLqjTyZ3g==
+"@types/picomatch@^2.3.3":
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/@types/picomatch/-/picomatch-2.3.3.tgz#be60498568c19e989e43fb39aa84be1ed3655e92"
+  integrity sha512-Yll76ZHikRFCyz/pffKGjrCwe/le2CDwOP5F210KQo27kpRE46U2rDnzikNlVn6/ezH3Mhn46bJMTfeVTtcYMg==
 
 "@types/relateurl@*":
   version "0.2.30"
@@ -259,10 +259,10 @@
   resolved "https://registry.yarnpkg.com/@types/resolve/-/resolve-1.20.2.tgz#97d26e00cd4a0423b4af620abecf3e6f442b7975"
   integrity sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==
 
-"@types/source-map-support@^0.5.9":
-  version "0.5.9"
-  resolved "https://registry.yarnpkg.com/@types/source-map-support/-/source-map-support-0.5.9.tgz#750860ba0dc3eb2929a940ac630e6ef60407f6b6"
-  integrity sha512-91Jf4LyPAObBTFbpW3bSDK1ncdwXohvlBmzffSj7/44SY+1mD/HhesdfspCMxPIJwllgN2G4eVFatGs4Zw/lnw==
+"@types/source-map-support@^0.5.10":
+  version "0.5.10"
+  resolved "https://registry.yarnpkg.com/@types/source-map-support/-/source-map-support-0.5.10.tgz#824dcef989496bae98e9d04c8dc1ac1d70e1bd39"
+  integrity sha512-tgVP2H469x9zq34Z0m/fgPewGhg/MLClalNOiPIzQlXrSS2YrKu/xCdSCKnEDwkFha51VKEKB6A9wW26/ZNwzA==
   dependencies:
     source-map "^0.6.0"
 

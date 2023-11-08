@@ -11,10 +11,10 @@ const pkg = createRequire(import.meta.url)('../package.json')
 
 const swcPlugin = () => ({
   transform(code, id) {
-    return id.includes('.ts') && 
+    return id.includes('.ts') &&
       transformSync(code, {
-        filename: id, 
-        jsc: { 
+        filename: id,
+        jsc: {
           parser: { syntax: 'typescript' },
           target: 'es2022'
         },
@@ -27,8 +27,10 @@ const external = [
   ...Object.keys(pkg.dependencies || {}),
   ...Object.keys(pkg.devDependencies || {}),
   ...builtinModules,
+  'typescript-paths',
   './register.js',
-  './dotenv.js'
+  './dotenv.js',
+  './ts-paths'
 ]
 
 const build = async (input, plugins) => {
@@ -46,9 +48,9 @@ const dtsBundle = async (input, file) => {
     external,
     plugins: [ dts() ],
   })
-  return build.write({ 
-    file: join('dist', file), 
-    format: 'es' 
+  return build.write({
+    file: join('dist', file),
+    format: 'es'
   })
 }
 
@@ -57,14 +59,15 @@ const destPath = join(...[ 'node_modules', 'qoi-cli' ])
 await rm(destPath, { recursive: true, force: true })
 await mkdir(destPath, { recursive: true })
 
-await Promise.all([ 
+await Promise.all([
   build('./src/register.ts'),
   build('./src/dotenv.ts'),
+  build('./src/ts-paths.ts'),
   dtsBundle('./src/register.ts', 'register.d.ts')
 ])
 await rename('dist', destPath)
 await writeFile(
-  join(destPath, 'package.json'), 
+  join(destPath, 'package.json'),
   JSON.stringify({
     "name": "qoi-cli",
     "version": "0.0.1",

@@ -1,6 +1,6 @@
 {
   "name": "qoi-cli",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "",
   "bin": {
     "qoi-cli": "./bin/qoi-cli.mjs"
@@ -10,7 +10,7 @@
   "module": "qoi-cli.js",
   "typings": "qoi-cli.d.ts",
   "scripts": {
-    "postinstall": "yarn register && yarn tsconfig:paths",
+    "postinstall": "yarn tsconfig:paths && yarn register",
     "build": "./bin/qoi-cli.mjs build --cleanOutDir",
     "register": "node ./tools/register.mjs",
     "tsconfig:paths": "node ./tools/tsconfig-paths.mjs"
@@ -46,9 +46,9 @@
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@types/node": "^20.8.10",
-    "@types/picomatch": "^2.3.2",
-    "@types/source-map-support": "^0.5.9",
+    "@types/node": "^20.9.0",
+    "@types/picomatch": "^2.3.3",
+    "@types/source-map-support": "^0.5.10",
     "cac": "^6.7.14",
     "dotenv": "^16.3.1",
     "minify-html-literals": "^1.3.5",

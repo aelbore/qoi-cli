@@ -17,7 +17,7 @@ const require$ = createRequire(import.meta.url)
 /**
  * Patch the Node CJS loader to suppress the ESM error
  * https://github.com/nodejs/node/blob/069b5df/lib/internal/modules/cjs/loader.js#L1125
- * 
+ *
  * As per https://github.com/standard-things/esm/issues/868#issuecomment-594480715
  * Idea is comming from https://github.com/egoist/esbuild-register/blob/master/src/node.ts
  */
@@ -53,7 +53,7 @@ function installSourceMapSupport() {
   })
 }
 
-function compile(content: string, file: string, options: Options) {  
+function compile(content: string, file: string, options: Options) {
   const jsc = createDefaultConfig(options)?.jsc
 
   const { code, map } = transformSync(content, {
@@ -77,15 +77,15 @@ const getTsConfig = () => {
   const tsconfigPath = resolve('tsconfig.json')
   const tsconfig = existsSync(tsconfigPath) ? getTsConfigPaths(tsconfigPath): undefined
 
-  const tsPaths = (process.platform.includes('win32') && tsconfig?.tsconfig) ? require$('typescript-paths'): undefined
-  tsPaths?.register({ tsconfigPath: { compilerOptions: tsconfig.tsconfig } }) 
+  const tsPaths = (process.platform.includes('win32') && tsconfig?.tsconfig) ? require$('./ts-paths'): undefined
+  tsPaths?.register$$({ tsconfigPath: { compilerOptions: tsconfig.tsconfig } })
 
   return tsconfig as import('typescript').CompilerOptions
 }
 
 export function getTsConfigPaths(tsconfigPath: string) {
   const { compilerOptions } = require$(tsconfigPath)
-  return compilerOptions?.paths ? { tsconfig: compilerOptions }: undefined 
+  return compilerOptions?.paths ? { tsconfig: compilerOptions }: undefined
 }
 
 export function createDefaultConfig(options?: Options) {
@@ -99,13 +99,13 @@ export function createDefaultConfig(options?: Options) {
         tsx: true
       },
       target: options?.jsc?.target || 'es2020',
-      ...process.platform.includes('win32') 
+      ...process.platform.includes('win32')
         ? {}
-        : options?.jsc?.paths 
+        : options?.jsc?.paths
           ? { baseUrl: options?.cwd || process.cwd(), paths: options.jsc.paths }
           : {}
     },
-    sourceMaps: options?.sourceMaps || false, 
+    sourceMaps: options?.sourceMaps || false,
     isModule: options?.isModule || true
   } as Options
 }
@@ -116,16 +116,16 @@ export function register(options?: RegisterOptions) {
   const compileCode = (code: string, filename: string) => {
     return compile(code, filename, {
       ...options || {},
-      jsc: { 
-        ...options?.jsc || {}, 
+      jsc: {
+        ...options?.jsc || {},
         ...paths ? { paths }: {}
       },
       sourceMaps: 'inline',
       minify: false,
       isModule: true,
-      module: { 
-        type: 'commonjs', 
-        noInterop: false 
+      module: {
+        type: 'commonjs',
+        noInterop: false
       }
     })
   }
