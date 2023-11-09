@@ -76,11 +76,7 @@ function compile(content: string, file: string, options: Options) {
 const getTsConfig = () => {
   const tsconfigPath = resolve('tsconfig.json')
   const tsconfig = existsSync(tsconfigPath) ? getTsConfigPaths(tsconfigPath): undefined
-
-  const tsPaths = (process.platform.includes('win32') && tsconfig?.tsconfig) ? require$('./ts-paths'): undefined
-  tsPaths?.register$$({ tsconfigPath: { compilerOptions: tsconfig.tsconfig } })
-
-  return tsconfig as import('typescript').CompilerOptions
+  return tsconfig?.tsconfig as import('typescript').CompilerOptions
 }
 
 export function getTsConfigPaths(tsconfigPath: string) {

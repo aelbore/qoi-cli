@@ -62,7 +62,6 @@ await mkdir(destPath, { recursive: true })
 await Promise.all([
   build('./src/register.ts'),
   build('./src/dotenv.ts'),
-  build('./src/ts-paths.ts'),
   dtsBundle('./src/register.ts', 'register.d.ts')
 ])
 await rename('dist', destPath)
