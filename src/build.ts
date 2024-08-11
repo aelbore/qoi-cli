@@ -408,13 +408,13 @@ export async function handler(options: BuildOptions) {
             dts: c.dts || options.dts
           }),
       copyReadMeFile({ output: options.outDir }),
+      copyPackge({ 
+        pkg, 
+        outDir: options.outDir,
+        packageJson: c.packageJson as PackageJsonFunc,
+        legacy: options.format.split(',').includes('cjs') 
+      })      
     ])
-    await copyPackge({ 
-      pkg, 
-      outDir: options.outDir,
-      packageJson: c.packageJson as PackageJsonFunc,
-      legacy: options.format.split(',').includes('cjs') 
-    })
     c.buildEnd && await c.buildEnd()
   }))
 }

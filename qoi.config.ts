@@ -88,8 +88,8 @@ export default defineConfig([
       pkg.exports = {
         ...pkg.exports || {},
         '.': { default: './qoi-cli.js' },
-        './register': './register.js',
-        './build': './build.js',
+        './register.js': './register.js',
+        './build.js': './build.js',
         './dotenv.js': './dotenv.js',
         './minify-literals.js': './minify-literals.js',
         './ts-paths.js': './ts-paths.js',
