@@ -4,7 +4,7 @@ import type { PackageJson as Package } from 'types-package-json'
 
 import type { Options } from './swc'
 
-export { createFilter } from './filter'
+export { createFilter, CreateFilter, FilterFn, FilterOptions } from './filter'
 
 export type PackageJson = Package & { 
   module?: string, 
