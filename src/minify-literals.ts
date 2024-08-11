@@ -1,5 +1,5 @@
 import type { Plugin } from 'rollup'
-import { minifyHTMLLiterals } from 'minify-html-literals'
+import { minifyHTMLLiterals } from '@literals/html-css-minifier'
 
 export const minifyLiterals = () => {
   return {

@@ -94,11 +94,11 @@ export function createDefaultConfig(options?: Options) {
         dynamicImport: true,
         tsx: true
       },
-      target: options?.jsc?.target || 'es2020',
+      target: options?.jsc?.target ?? 'es2022',
       ...process.platform.includes('win32')
         ? {}
         : options?.jsc?.paths
-          ? { baseUrl: options?.cwd || process.cwd(), paths: options.jsc.paths }
+          ? { baseUrl: options?.cwd ?? process.cwd(), paths: options.jsc.paths }
           : {}
     },
     sourceMaps: options?.sourceMaps || false,

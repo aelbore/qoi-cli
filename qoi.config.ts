@@ -11,6 +11,7 @@ import { existsSync } from 'fs'
 export default defineConfig([
   {
     input: './src/index.ts',
+    external: [ 'terser' ],
     resolve: [
       '@rollup/plugin-node-resolve',
       '@rollup/plugin-commonjs',
@@ -21,7 +22,10 @@ export default defineConfig([
       'rollup-plugin-dts',
       'dotenv',
       'rollup-plugin-tsconfig-paths',
-      'typescript-paths'
+      'typescript-paths',
+      '@literals/html-css-minifier',
+      '@literals/parser',
+      'html-minifier-terser'
     ],
     plugins: [ json() ],
     output(options: OutputOptions) {
@@ -29,7 +33,10 @@ export default defineConfig([
       options.manualChunks = (id: string) => {
         if (id.includes('dotenv')) return 'dotenv'
         if (id.includes('picomatch')) return 'picomatch'
-        if (id.includes('minify-literals')) return 'minify-literals'
+        if (id.includes('minify-literals') || 
+            id.includes('@literals/html-css-minifier') || 
+            id.includes('@literals/parser') ||
+            id.includes('html-minifier-terser')) return 'minify-literals'
         if (id.includes('ts-paths') || id.includes('rollup-plugin-tsconfig-paths') || id.includes('typescript-paths')) return 'ts-paths'
         if (id.includes('rollup-plugin-dts')) return 'rollup-plugin-dts'
         if (id.includes('@rollup')) return 'build.vendor'
