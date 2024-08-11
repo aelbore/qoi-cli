@@ -11,7 +11,6 @@ import { existsSync } from 'fs'
 export default defineConfig([
   {
     input: './src/index.ts',
-    external: [ 'terser' ],
     resolve: [
       '@rollup/plugin-node-resolve',
       '@rollup/plugin-commonjs',
@@ -43,6 +42,7 @@ export default defineConfig([
         if (id.includes('node_modules')) return 'vendor'
         if (id.includes('register')) return 'register'
         if (id.includes('build')) return 'build'
+        if (id.includes('filter')) return 'filter'
       }
       options.chunkFileNames = (chunkInfo: PreRenderedChunk) => {
         switch (chunkInfo.name) {
@@ -51,6 +51,7 @@ export default defineConfig([
           case 'minify-literals': return 'minify-literals.js'
           case 'register': return 'register.js'
           case 'build': return 'build.js'
+          case 'filter': return 'filter.js'
           default: return '[name].[hash].js'
         }
       }
@@ -91,7 +92,8 @@ export default defineConfig([
         './build': './build.js',
         './dotenv.js': './dotenv.js',
         './minify-literals.js': './minify-literals.js',
-        './ts-paths.js': './ts-paths.js'
+        './ts-paths.js': './ts-paths.js',
+        './filter.js': './filter.js'
       }
       return pkg
     },

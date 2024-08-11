@@ -1,9 +1,10 @@
 import type { Plugin } from 'rollup'
+import { createFilter, type CreateFilter } from './filter'
 
 import { existsSync, statSync } from 'fs'
 import { dirname, extname, join } from 'path'
 
-import { Options, minifySync, transformSync } from '@swc/core'
+import { minifySync, transformSync } from '@swc/core'
 import { createDefaultConfig } from './register'
 
 const EXTENSIONS = [ 'ts', 'tsx' ]
@@ -49,9 +50,14 @@ const minify = (code: string, options: Options) => {
   })
 }
 
+export type Options = { 
+  createFilter?: () => Partial<CreateFilter>
+} & import('@swc/core').Options
+
 export function swcPlugin(options?: Options) {
   const extensions = EXTENSIONS.map(ext => `.${ext}`)
   const filter = (id: string) => extensions.includes(extname(id))
+  const filter$ = createFilter()
 
   const opts = createDefaultConfig(options)
 
@@ -60,10 +66,13 @@ export function swcPlugin(options?: Options) {
     resolveId: pathResolver(),
     transform(code: string, id: string) {
       if (id.includes('node_modules')) return null
-      return filter(id) && transformSync(code, { filename: id, ...opts })
+
+      if (filter$?.tsFilter?.(id) || filter$?.cssFilter?.(id) || filter(id)) {
+        return transformSync(code, { filename: id, ...opts })
+      }
     },
     renderChunk(code: string) {
-      return options?.minify? minify(code, options): null
+      return options?.minify ? minify(code, options): null
     }
   } as Plugin
 }

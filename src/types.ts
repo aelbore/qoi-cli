@@ -1,6 +1,10 @@
-import type { Options } from '@swc/core'
+
 import type { OutputOptions, ModuleFormat, RollupOptions, Plugin as RollupPlugin } from 'rollup'
 import type { PackageJson as Package } from 'types-package-json'
+
+import type { Options } from './swc'
+
+export { createFilter } from './filter'
 
 export type PackageJson = Package & { 
   module?: string, 
@@ -83,7 +87,7 @@ export type TypesOptions = {
   resolve?: boolean | string | string[]
 } & RollupOptions
 
-export type RegisterOptions = Options & {
+export type RegisterOptions = import('@swc/core').Options & {
   tsconfig?: {
     paths?: { [from: string]: [string] }
   }
