@@ -60,7 +60,7 @@ export default defineConfig([
     async buildEnd() {
       const destPath = './dist/qoi-cli.js'
       existsSync(destPath) && await fs.unlink(destPath)
-      await fs.copyFile('./src/index.ts', destPath)
+      await fs.copyFile('./tools/qoi-cli.js', destPath)
     }
   },
   {
@@ -88,12 +88,12 @@ export default defineConfig([
       pkg.exports = {
         ...pkg.exports || {},
         '.': { default: './qoi-cli.js' },
-        './register.js': './register.js',
-        './build.js': './build.js',
-        './dotenv.js': './dotenv.js',
-        './minify-literals.js': './minify-literals.js',
-        './ts-paths.js': './ts-paths.js',
-        './filter.js': './filter.js'
+        './register': { 'default': './register.js' },
+        './build': { 'default': './build.js' },
+        './dotenv.js': { 'default': './dotenv.js' },
+        './minify-literals.js': { 'default': './minify-literals.js' },
+        './ts-paths.js': { 'default': './ts-paths.js' },
+        './filter.js': { 'default': './filter.js' }
       }
       return pkg
     },
