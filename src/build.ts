@@ -420,3 +420,5 @@ export async function handler(options: BuildOptions) {
 }
 
 export const defineConfig = (config: Config | Config[]) => config
+
+export { swcPlugin }

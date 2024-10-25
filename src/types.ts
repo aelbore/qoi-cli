@@ -93,6 +93,7 @@ export type RegisterOptions = import('@swc/core').Options & {
   }
 }
 
+declare function swcPlugin(options?: Options): Plugin
 declare function handler(options: BuildOptions): Promise<void>
 declare function getOptions(options: BuildOptions): BuildOptions
 declare function baseExternals(pkg?: PackageJson): string[]
@@ -102,4 +103,4 @@ declare function getTsConfigPaths(tsconfigPath: string): import('typescript').Co
 
 declare function defineConfig(config: Config | Config[]): Config | Config[]
 
-export { defineConfig, handler, getOptions, baseExternals, register, createDefaultConfig, getTsConfigPaths }
+export { swcPlugin, defineConfig, handler, getOptions, baseExternals, register, createDefaultConfig, getTsConfigPaths }

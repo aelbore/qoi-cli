@@ -57,9 +57,10 @@ export type Options = {
 export function swcPlugin(options?: Options) {
   const extensions = EXTENSIONS.map(ext => `.${ext}`)
   const filter = (id: string) => extensions.includes(extname(id))
-  const filter$ = createFilter()
+  const filter$ = options?.createFilter?.()
 
-  const opts = createDefaultConfig(options)
+  const { createFilter, ...rest } = options ?? {}
+  const opts = createDefaultConfig(rest)
 
   return {
     name: 'swc',
@@ -72,7 +73,7 @@ export function swcPlugin(options?: Options) {
       }
     },
     renderChunk(code: string) {
-      return options?.minify ? minify(code, options): null
+      return rest?.minify ? minify(code, rest): null
     }
   } as Plugin
 }
