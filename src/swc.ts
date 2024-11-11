@@ -60,14 +60,20 @@ export function swcPlugin(options?: Options) {
   const filter$ = options?.createFilter?.()
 
   const { createFilter, ...rest } = options ?? {}
-  const opts = createDefaultConfig(rest)
-
+  const defaults = createDefaultConfig(rest)
+  const opts = { 
+    ...defaults,
+    jsc: {
+      ...defaults.jsc ?? {},
+      ...({ baseUrl: rest?.jsc?.baseUrl ?? process.cwd() }),
+      ...({ paths: rest?.jsc?.paths ?? {} })
+    }
+  } as Options 
   return {
     name: 'swc',
     resolveId: pathResolver(),
     transform(code: string, id: string) {
       if (id.includes('node_modules')) return null
-
       if (filter$?.tsFilter?.(id) || filter$?.cssFilter?.(id) || filter(id)) {
         return transformSync(code, { filename: id, ...opts })
       }
