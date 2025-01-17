@@ -101,6 +101,12 @@ declare function register(options?: Options): void
 declare function createDefaultConfig(options?: Options): void
 declare function getTsConfigPaths(tsconfigPath: string): import('typescript').CompilerOptions
 
+declare function minifyFragmentSync(
+  code: string, 
+  options?: import('@swc/html').FragmentOptions
+): string
+declare function minifyLiterals(): import('rollup').Plugin
+
 declare function defineConfig(config: Config | Config[]): Config | Config[]
 
-export { swcPlugin, defineConfig, handler, getOptions, baseExternals, register, createDefaultConfig, getTsConfigPaths }
+export { minifyLiterals, minifyFragmentSync, swcPlugin, defineConfig, handler, getOptions, baseExternals, register, createDefaultConfig, getTsConfigPaths }

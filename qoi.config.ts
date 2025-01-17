@@ -22,9 +22,9 @@ export default defineConfig([
       'dotenv',
       'rollup-plugin-tsconfig-paths',
       'typescript-paths',
-      '@literals/html-css-minifier',
-      '@literals/parser',
-      'html-minifier-terser'
+      'acorn-walk',
+      'acorn',
+      'make-synchronous'
     ],
     plugins: [ json() ],
     output(options: OutputOptions) {
@@ -35,11 +35,12 @@ export default defineConfig([
         if (id.includes('minify-literals') || 
             id.includes('@literals/html-css-minifier') || 
             id.includes('@literals/parser') ||
-            id.includes('html-minifier-terser')) return 'minify-literals'
+            id.includes('html-minifier-terser') ||
+            id.includes('make-synchronous')) return 'minify-literals'
         if (id.includes('ts-paths') || id.includes('rollup-plugin-tsconfig-paths') || id.includes('typescript-paths')) return 'ts-paths'
         if (id.includes('rollup-plugin-dts')) return 'rollup-plugin-dts'
         if (id.includes('@rollup')) return 'build.vendor'
-        if (id.includes('node_modules')) return 'vendor'
+        if (id.includes('node_modules') || id.includes('acorn')) return 'vendor'
         if (id.includes('register')) return 'register'
         if (id.includes('build')) return 'build'
         if (id.includes('filter')) return 'filter'

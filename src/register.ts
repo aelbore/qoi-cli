@@ -121,7 +121,7 @@ export function register(options?: RegisterOptions) {
       isModule: true,
       module: {
         type: 'commonjs',
-        noInterop: false
+        ignoreDynamic: true
       }
     })
   }
