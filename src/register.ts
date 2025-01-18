@@ -64,7 +64,7 @@ function compile(content: string, file: string, options: Options) {
     isModule: true,
     module: {
       type: 'commonjs',
-      noInterop: false
+      ignoreDynamic: true
     }
   })
 
@@ -115,13 +115,6 @@ export function register(options?: RegisterOptions) {
       jsc: {
         ...options?.jsc || {},
         ...paths ? { paths }: {}
-      },
-      sourceMaps: 'inline',
-      minify: false,
-      isModule: true,
-      module: {
-        type: 'commonjs',
-        ignoreDynamic: true
       }
     })
   }

@@ -158,7 +158,7 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
       }),
       nodeResolve(),
       swcPlugin(swc),
-      ...isLiterals ? [ requireModule('./minify-literals').minifyLiterals() ]: []
+      ...isLiterals ? [ requireModule('minify-template-literals/acorn').minifyLiterals() ]: []
     ],
     output: createOutputOptions({
       ...options,

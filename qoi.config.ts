@@ -22,9 +22,6 @@ export default defineConfig([
       'dotenv',
       'rollup-plugin-tsconfig-paths',
       'typescript-paths',
-      'acorn-walk',
-      'acorn',
-      'make-synchronous'
     ],
     plugins: [ json() ],
     output(options: OutputOptions) {

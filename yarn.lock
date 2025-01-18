@@ -317,7 +317,7 @@
   dependencies:
     undici-types "~6.20.0"
 
-"@types/picomatch@^3.0.1":
+"@types/picomatch@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/picomatch/-/picomatch-3.0.2.tgz#27edebec66726b2aabdca71338d129ffe9fffcf9"
   integrity sha512-n0i8TD3UDB7paoMMxA3Y65vUncFJXjcUf7lQY7YyKGl6031FNjfsLs6pdLFCy2GNFxItPJG8GvvpbZc2skH7WA==
@@ -333,18 +333,6 @@
   integrity sha512-tgVP2H469x9zq34Z0m/fgPewGhg/MLClalNOiPIzQlXrSS2YrKu/xCdSCKnEDwkFha51VKEKB6A9wW26/ZNwzA==
   dependencies:
     source-map "^0.6.0"
-
-acorn-walk@^8.3.4:
-  version "8.3.4"
-  resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.3.4.tgz#794dd169c3977edf4ba4ea47583587c5866236b7"
-  integrity sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==
-  dependencies:
-    acorn "^8.11.0"
-
-acorn@^8.11.0:
-  version "8.14.0"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.14.0.tgz#063e2c70cac5fb4f6467f0b11152e04c682795b0"
-  integrity sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==
 
 buffer-from@^1.0.0:
   version "1.1.2"
@@ -441,13 +429,13 @@ magic-string@^0.30.10, magic-string@^0.30.3:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.5.0"
 
-make-synchronous@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/make-synchronous/-/make-synchronous-1.0.0.tgz#882ed3fa6e215487b7bc67ecc3feb171f1d5ffff"
-  integrity sha512-IgPLsc2Pf6c7qiIGRQiE8ns0GaCdHmwfz1dJBqJAOwMN2naVp9+JlirSqNPYlGsDSrNRCgVqEiPOieaNqWxeqA==
+minify-template-literals@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/minify-template-literals/-/minify-template-literals-0.1.0.tgz#3ac25951ca0fd40d08ad5feaa234afd0e492dddd"
+  integrity sha512-CCkWTU0ckIoz0QrRsX0puCY8af7l/TV4/kV2CzQEOEy2wutJlFmAZtuopy0QNGofTidu6CVOTxQ3+L/pE5P8uA==
   dependencies:
+    "@swc/html" "^1.10.7"
     subsume "^4.0.0"
-    type-fest "^2.3.3"
 
 path-parse@^1.0.7:
   version "1.0.7"
@@ -552,11 +540,6 @@ type-fest@^1.0.1:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-1.4.0.tgz#e9fb813fe3bf1744ec359d55d1affefa76f14be1"
   integrity sha512-yGSza74xk0UG8k+pLh5oeoYirvIiWo5t0/o3zHHAO2tRDiZcxWP7fywNlXhqb6/r6sWvwi+RsyQMWhVLe4BVuA==
-
-type-fest@^2.3.3:
-  version "2.19.0"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-2.19.0.tgz#88068015bb33036a598b952e55e9311a60fd3a9b"
-  integrity sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==
 
 types-package-json@^2.0.39:
   version "2.0.39"
