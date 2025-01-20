@@ -1,6 +1,5 @@
 export * from './register.js'
 export * from './build.js'
 export * from './dotenv.js'
-export * from './minify-literals.js'
 export * from './ts-paths.js'
 export * from './filter.js'
