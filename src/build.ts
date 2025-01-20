@@ -136,6 +136,12 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
   const isLiterals = (typeof options.minify == 'string') && options.minify.includes('literals')
   const minify = (typeof options.minify == 'boolean') ? options.minify: isLiterals  
   const swc = { ...config.swc, sourceMaps: config.sourcemap || options.sourcemap || false, minify } as Options
+
+  const toMinifyLiterals = () => {
+    if (!isLiterals) return []
+    return [ requireModule('minify-template-literals').minifyLiterals() ]
+  }
+
   return {
     input: config.input || getEntryFile({ pkgName: pkg.name, dir: options.dir }),
     external: updateExternalWithResolve({
@@ -158,7 +164,7 @@ const createOptions = ({ config, options, pkg }: CreateOptions) => {
       }),
       nodeResolve(),
       swcPlugin(swc),
-      ...isLiterals ? [ requireModule('minify-template-literals/acorn').minifyLiterals() ]: []
+      ...toMinifyLiterals()
     ],
     output: createOutputOptions({
       ...options,
