@@ -1,6 +1,6 @@
 {
   "name": "qoi-cli",
-  "version": "0.53.0",
+  "version": "0.54.0",
   "description": "",
   "bin": {
     "qoi-cli": "./bin/qoi-cli.mjs"
@@ -36,22 +36,22 @@
   },
   "homepage": "https://github.com/aelbore/qoi-cli#readme",
   "peerDependencies": {
-    "minify-template-literals": "^0.3.3"
+    "minify-template-literals": ">=0.3.3"
   },
   "dependencies": {
-    "@swc/core": "^1.10.8",
-    "rollup": "^4.31.0"
+    "@swc/core": "^1.10.16",
+    "rollup": "^4.34.7"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.13.4",
     "@types/picomatch": "^3.0.2",
     "@types/source-map-support": "^0.5.10",
     "cac": "^6.7.14",
     "dotenv": "^16.4.7",
-    "minify-template-literals": "^0.3.2",
+    "minify-template-literals": "^0.4.0",
     "picomatch": "^4.0.2",
     "pirates": "^4.0.6",
     "rollup-plugin-dts": "^6.1.1",
