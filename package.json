@@ -1,6 +1,6 @@
 {
   "name": "qoi-cli",
-  "version": "0.56.1",
+  "version": "0.56.2",
   "description": "",
   "bin": {
     "qoi-cli": "./bin/qoi-cli.mjs"
@@ -39,19 +39,19 @@
     "minify-template-literals": ">=0.3.3"
   },
   "dependencies": {
-    "@swc/core": "^1.11.29",
-    "rollup": "^4.41.0"
+    "@swc/core": "^1.11.31",
+    "rollup": "^4.42.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.30",
     "@types/picomatch": "^4.0.0",
     "@types/source-map-support": "^0.5.10",
     "cac": "^6.7.14",
     "dotenv": "^16.5.0",
-    "minify-template-literals": "^0.8.2",
+    "minify-template-literals": "^0.8.3",
     "picomatch": "^4.0.2",
     "pirates": "^4.0.7",
     "rollup-plugin-dts": "^6.2.1",
